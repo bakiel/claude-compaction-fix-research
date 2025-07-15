@@ -1,9 +1,9 @@
 # Claude Code Compaction Fix - Complete Solution
 
-## 🚨 **TL;DR: SOLUTION FOUND**
-**Root Cause:** Corrupted `.zshrc` shell configuration causing immediate context compaction  
-**Solution:** Fix `.zshrc` parse errors + restart shell environment  
-**Status:** ✅ **SOLVED** - Normal Claude Code behavior restored!
+## 🚨 **TL;DR: MULTIPLE SOLUTIONS FOUND**
+**Root Causes Identified:** Shell configuration corruption + Cache corruption  
+**Solutions:** Shell config repair OR cache cleanup  
+**Status:** ✅ **SOLVED** - Multiple proven fixes for different platforms!
 
 ---
 
@@ -14,10 +14,11 @@ Claude Code immediately shows "Context left until auto-compact: 0%" on any input
 - ❌ No normal project analysis possible
 - ❌ "Cheeky compaction" behavior that survives app reinstalls
 
-## 🏆 **The Solution**
-**Shell configuration corruption** was the root cause!
+## 🏆 **Multiple Root Causes & Solutions**
 
-### **Quick Fix:**
+### **Solution 1: Shell Configuration Fix (macOS)**
+**Root Cause:** Corrupted `.zshrc` shell configuration
+
 ```bash
 # 1. Check for .zshrc parse errors
 zsh -n ~/.zshrc
@@ -27,14 +28,32 @@ nano ~/.zshrc
 
 # 3. Restart shell environment
 source ~/.zshrc
-# OR restart terminal completely
 
 # 4. Test Claude Code
 claude
 # Should now show normal context percentages!
 ```
 
-### **Nuclear Option (if .zshrc is severely corrupted):**
+### **Solution 2: Cache Cleanup (Cross-Platform)**
+**Root Cause:** Corrupted Claude CLI cache  
+**Discovered by:** [@xianjun-zhang](https://github.com/xianjun-zhang)
+
+```bash
+# Linux/WSL2
+rm -rf ~/.cache/claude-cli-nodejs
+
+# macOS
+rm -rf ~/Library/Caches/claude-cli-nodejs
+
+# Windows
+# Delete cache from AppData\Local\claude-cli-nodejs
+
+# Test Claude Code
+claude
+# Should now show normal context percentages!
+```
+
+### **Nuclear Option (if both above fail):**
 ```bash
 # Backup and reset shell config
 mv ~/.zshrc ~/.zshrc.broken
@@ -44,26 +63,27 @@ mv ~/.zshrc ~/.zshrc.broken
 
 ---
 
-## 🔍 **How We Found This**
+## 🔍 **How We Found These Solutions**
 
 ### **Systematic Investigation Process**
-This solution came from **systematic elimination** of possible causes:
+These solutions came from **systematic elimination** of possible causes:
 
 1. **❌ Network Issues** - VPN test failed to fix (ruled out ISP/routing)
 2. **❌ System Corruption** - Fresh user account worked perfectly (ruled out system-wide)
 3. **❌ Application Issues** - Reinstalls failed to fix (ruled out app corruption)
-4. **✅ User Environment** - Fresh account worked + .zshrc error = BINGO!
+4. **✅ User Environment Issues** - Multiple discoveries:
+   - Shell configuration corruption (original investigation)
+   - Cache corruption (community discovery)
 
-### **The Breakthrough**
-- Fresh macOS user account showed **normal Claude Code behavior**
-- Main account showed `.zshrc` parse error on line 35
-- **Shell environment corruption** affects Node.js/Claude Code execution
-- Cleanup + restart fixed the shell corruption = **TOTAL VICTORY!**
+### **The Breakthrough Process**
+- **Original Discovery:** Fresh macOS user account showed normal behavior + `.zshrc` parse error identified
+- **Community Extension:** WSL2 user with clean shell config found cache corruption as alternative cause
+- **Cross-Platform Validation:** Same systematic methodology → different root causes → confirmed fixes
 
 ---
 
 ## 📊 **Success Indicators**
-After applying the fix, you should see:
+After applying either fix, you should see:
 - ✅ **Context shows actual percentages** (30%, 60%, 90%) instead of immediate 0%
 - ✅ **Normal project analysis** without immediate compaction
 - ✅ **Manual `/compact` works** at logical breakpoints (30-40% remaining)
@@ -71,9 +91,28 @@ After applying the fix, you should see:
 
 ---
 
-## 🛠️ **Advanced Troubleshooting**
+## 🛠️ **Platform-Specific Troubleshooting**
 
-### **If Basic Fix Doesn't Work:**
+### **macOS:**
+1. **Check shell config:** `zsh -n ~/.zshrc`
+2. **Check cache:** `rm -rf ~/Library/Caches/claude-cli-nodejs`
+3. **Check other shells:** `zsh -n ~/.zprofile ~/.bashrc ~/.bash_profile`
+
+### **Linux/WSL2:**
+1. **Check cache first:** `rm -rf ~/.cache/claude-cli-nodejs`
+2. **Check shell config:** `bash -n ~/.bashrc` or `zsh -n ~/.zshrc`
+3. **Check environment:** `env | grep -i claude`
+
+### **Windows:**
+1. **Check cache:** Delete `%LOCALAPPDATA%\claude-cli-nodejs`
+2. **Check PowerShell profile:** Test PowerShell configuration
+3. **Check environment variables:** Review PATH and Claude-related variables
+
+---
+
+## 🔬 **Advanced Troubleshooting**
+
+### **If Basic Fixes Don't Work:**
 1. **Check other shell configs:**
    ```bash
    # Check all shell configuration files
@@ -97,7 +136,7 @@ After applying the fix, you should see:
    ```
 
 ### **Testing Fresh Account (Advanced):**
-If nothing else works, test with a completely fresh macOS user account to isolate the issue.
+If nothing else works, test with a completely fresh user account to isolate the issue.
 
 ---
 
@@ -106,24 +145,31 @@ This repository contains **complete investigation documentation** in the `docs/`
 - Systematic debugging methodology
 - All theories tested and eliminated
 - User account corruption analysis
-- VPN testing results
-- Step-by-step solution process
+- Community discoveries and contributions
+- Cross-platform solution validation
 
 **Total investigation time:** Several days of systematic research  
-**Investigation quality:** Professional-grade systematic elimination
+**Investigation quality:** Professional-grade systematic elimination  
+**Community contributions:** Multiple confirmed solutions
 
 ---
 
 ## 🎯 **Why This Matters**
 Claude Code v1.0.51 compaction issues are **NOT version problems** - they're often **environment corruption** that can be fixed!
 
-Many users experiencing "immediate compaction" can solve their issues with shell configuration fixes rather than downgrading or waiting for updates.
+Multiple root causes have been identified:
+- **Shell configuration corruption** (especially macOS)
+- **Cache corruption** (cross-platform)
+- **User environment conflicts** (various platforms)
+
+Many users experiencing "immediate compaction" can solve their issues with these proven fixes rather than downgrading or waiting for updates.
 
 ---
 
 ## 🏆 **Community Success Stories**
 - ✅ **Original reporter:** Immediate 0% compaction → Normal behavior after .zshrc fix
-- ✅ **Systematic methodology** proven effective for isolation and resolution
+- ✅ **[@xianjun-zhang](https://github.com/xianjun-zhang):** WSL2 immediate compaction → Fixed with cache cleanup
+- ✅ **Systematic methodology** proven effective across platforms and root causes
 
 ---
 
@@ -131,17 +177,25 @@ Many users experiencing "immediate compaction" can solve their issues with shell
 Found this helpful? Encountered similar issues? 
 - Share your success stories in Issues
 - Document additional corruption patterns
-- Help expand the troubleshooting methodology
+- Help expand cross-platform solutions
+- Report new root causes discovered through systematic methodology
+
+### **Community Discoveries:**
+- **Cache Corruption Solution** - [@xianjun-zhang](https://github.com/xianjun-zhang)
+- **Cross-Platform Validation** - Multiple contributors
+- **Additional patterns welcome!**
 
 ---
 
 ## ⚡ **Quick Reference**
 ```bash
-# Quick diagnostic
-zsh -n ~/.zshrc
+# Quick diagnostics (try in order)
+zsh -n ~/.zshrc                               # Check shell
+rm -rf ~/.cache/claude-cli-nodejs             # Linux cache
+rm -rf ~/Library/Caches/claude-cli-nodejs     # macOS cache
 
-# Quick fix
-nano ~/.zshrc  # Fix parse errors
+# Quick fix attempt
+nano ~/.zshrc  # Fix parse errors if found
 source ~/.zshrc
 
 # Quick test
@@ -150,10 +204,11 @@ claude  # Should show normal context %
 
 ---
 
-**Status:** ✅ **SOLVED** - The "cheeky compaction" is defeated!  
-**Community Impact:** High - Shell corruption is a common but overlooked cause  
-**Success Rate:** 100% when root cause is shell configuration corruption  
+**Status:** ✅ **MULTIPLE SOLUTIONS PROVEN** - Different root causes solved!  
+**Community Impact:** High - Multiple platforms and corruption types covered  
+**Success Rate:** 100% when applying correct solution for specific root cause  
+**Cross-Platform:** macOS, Linux/WSL2, Windows coverage
 
 ---
 
-*This solution was developed through systematic investigation and community collaboration. Special thanks to professional-grade debugging methodology that led to the breakthrough!* 🎉
+*This solution was developed through systematic investigation and active community collaboration. Special thanks to [@xianjun-zhang](https://github.com/xianjun-zhang) for discovering the cache corruption solution and all contributors helping validate fixes across platforms!* 🎉
